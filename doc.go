@@ -19,7 +19,7 @@ it defines two groups of tasks, one for Linux and one for Darwin.
 Groups are being skipped based on the content of `OS`
 
 	vars:
-	OS: uname
+		OS: uname
 	groups:
 	  - id: linuxGroup
 	    skip_cmd: |
