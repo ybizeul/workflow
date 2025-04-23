@@ -1,0 +1,17 @@
+
+groups:
+  - id: group1
+    tasks:
+      - id: task1
+        weight: 100
+        cmd: |
+          output task1
+          progress 0.4
+          progress 0.8
+      - id: task2
+        weight: 100
+        cmd: |
+          output task2
+          progress 0.2
+          progress 0.6
+          progress 1

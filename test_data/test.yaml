@@ -1,0 +1,32 @@
+vars:
+  VAR1: echo var1
+  VAR2: echo var2
+groups:
+  - id: group1
+    tasks:
+      - id: task1
+        weight: 50
+        cmd: |
+          output Some Data
+          output $VAR1
+          sleep 5
+          output $VAR2
+      - id: task2
+        weight: 50
+        cmd: |
+          progress 0.2
+          progress 0.4
+          output task2 finished
+  - id: group2
+    tasks:
+      - id: task1
+        skip: true
+        weight: 10
+        cmd: |
+          output $VAR1
+          output $VAR2
+      - id: task2
+        weight: 10
+        cmd: |
+          output $VAR1
+          output $VAR2

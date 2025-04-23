@@ -1,0 +1,15 @@
+groups:
+  - id: group1
+    skip_cmd: |
+      exit 0
+    tasks:
+      - id: task1
+        weight: 50
+        cmd: |
+          output group1
+  - id: group2
+    tasks:
+      - id: task1
+        weight: 10
+        cmd: |
+          output group2

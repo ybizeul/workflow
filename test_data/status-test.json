@@ -1,0 +1,111 @@
+{
+    "definition": {
+      "groups": [
+        {
+          "id": "group1",
+          "tasks": [
+            {
+              "cmd": "output Some Data\noutput $VAR1\nsleep 5\noutput $VAR2\n",
+              "id": "task1",
+              "weight": 50
+            },
+            {
+              "cmd": "progress 0.2\nprogress 0.4\noutput task2 finished\n",
+              "id": "task2",
+              "weight": 50
+            }
+          ]
+        },
+        {
+          "id": "group2",
+          "tasks": [
+            {
+              "cmd": "output $VAR1\noutput $VAR2\n",
+              "id": "task1",
+              "skip": true,
+              "weight": 10
+            },
+            {
+              "cmd": "output $VAR1\noutput $VAR2",
+              "id": "task2",
+              "weight": 10
+            }
+          ]
+        }
+      ],
+      "vars": {
+        "VAR1": "echo var1",
+        "VAR2": "echo var2"
+      }
+    },
+    "started": true,
+    "finished": false,
+    "percent": 0,
+    "lastMessage": "var1",
+    "vars": {
+      "VAR1": "var1",
+      "VAR2": "var2"
+    },
+    "groups": [
+      {
+        "id": "group1",
+        "tasks": [
+          {
+            "id": "task1",
+            "weight": 50,
+            "exits": false,
+            "started": true,
+            "finished": false,
+            "percent": 0,
+            "error": ""
+          },
+          {
+            "id": "task2",
+            "weight": 50,
+            "exits": false,
+            "started": false,
+            "finished": false,
+            "percent": 0,
+            "error": ""
+          }
+        ],
+        "skip": null,
+        "percent": 0,
+        "started": true,
+        "finished": false,
+        "lastMessage": "var1",
+        "error": ""
+      },
+      {
+        "id": "group2",
+        "tasks": [
+          {
+            "id": "task1",
+            "weight": 10,
+            "exits": false,
+            "started": false,
+            "finished": false,
+            "percent": 0,
+            "error": ""
+          },
+          {
+            "id": "task2",
+            "weight": 10,
+            "exits": false,
+            "started": false,
+            "finished": false,
+            "percent": 0,
+            "error": ""
+          }
+        ],
+        "skip": null,
+        "percent": 0,
+        "started": false,
+        "finished": false,
+        "lastMessage": "",
+        "error": ""
+      }
+    ],
+    "currentGroup": "group1",
+    "currentTask": "task1"
+  }
