@@ -35,7 +35,7 @@ Groups are being skipped based on the content of `OS`
           - id: task1
             weight: 50
             cmd: |
-            output `ip a s eth0|grep inet`
+              output `ip a s eth0|grep inet`
       - id: darwinGroup
         skip_cmd: |
           [ "$OS" != "Darwin" ]
@@ -43,4 +43,4 @@ Groups are being skipped based on the content of `OS`
           - id: task1
             weight: 50
             cmd: |
-            output `ifconfig en0|grep "inet "`
+              output `ifconfig en0|grep "inet "`
