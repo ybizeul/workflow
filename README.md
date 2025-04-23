@@ -12,7 +12,13 @@ meaningful information to the websocket.
 Tasks can have an optional relative `weight` value so a progress expressed in
 percent is added in the status message.
 
-# Example
+## Working with websocket
+
+[TODO]
+
+Refer to `workflow_test.go` for example of handling websockets
+
+## Example
 
 This workflow declares a variable `OS` with the output of `uname` command, then
 it defines two groups of tasks, one for Linux and one for Darwin.
