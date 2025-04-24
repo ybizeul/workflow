@@ -18,10 +18,9 @@ import (
 // It returns the websocket connection, and a function to start the workflow
 // The websocket connects immediatly, but the workflow is started only when
 // the start function is called.
-func make_socket(t *testing.T, wf *Workflow, fn http.HandlerFunc) (*websocket.Conn, func()) {
+func make_socket(t *testing.T, wf *Workflow, fn http.Handler) (*websocket.Conn, func()) {
 
-	h := http.HandlerFunc(fn)
-	s := httptest.NewServer(h)
+	s := httptest.NewServer(fn)
 
 	u := "ws" + strings.TrimPrefix(s.URL, "http")
 	conn, _, err := websocket.Dial(context.Background(), u, nil)
@@ -122,8 +121,7 @@ func TestWorkflowLateWS(t *testing.T) {
 	time.Sleep(3 * time.Second)
 
 	// Start test web server
-	h := http.HandlerFunc(fn)
-	r := httptest.NewServer(h)
+	r := httptest.NewServer(fn)
 	defer r.Close()
 
 	// Connect to it

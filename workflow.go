@@ -64,7 +64,7 @@ type Status struct {
 // New returns a new Workflow with definition at definitionPath and status file
 // to be written at statusFilePath as well as a http.HandlerFunc for handling
 // websocket connections.
-func New(definitionFilePath string, statusFilePath string) (*Workflow, func(w http.ResponseWriter, r *http.Request), error) {
+func New(definitionFilePath string, statusFilePath string) (*Workflow, http.Handler, error) {
 	result := &Workflow{
 		workflowPath: definitionFilePath,
 		statusPath:   statusFilePath,
