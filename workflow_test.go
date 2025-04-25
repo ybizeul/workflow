@@ -171,9 +171,15 @@ func TestWorkflowEarlyTerminationWS(t *testing.T) {
 	got := ""
 
 	start()
-	err = wsjson.Read(context.Background(), conn, &message)
-	if err != nil {
-		slog.Error("error while reading", "error", err)
+
+	for {
+		err = wsjson.Read(context.Background(), conn, &message)
+		if err != nil {
+			slog.Error("error while reading", "error", err)
+		}
+		if message.LastMessage != "" {
+			break
+		}
 	}
 
 	err = conn.Close(websocket.StatusNormalClosure, "")
@@ -181,11 +187,11 @@ func TestWorkflowEarlyTerminationWS(t *testing.T) {
 		slog.Error("error while closing", "error", err)
 	}
 
+	want := "Some Data\n"
+
 	got += message.LastMessage + "\n"
 
 	wf.Abort()
-
-	want := "Some Data\n"
 
 	if got != want {
 		t.Fatalf("want %q, got %q", want, got)

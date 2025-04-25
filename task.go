@@ -21,7 +21,7 @@ import (
 // that is known to execute for a long time can be given a weight of 100.
 //
 // If `exits` is set to true, the running program will exit after the task,
-// and next time the workflow is run with [Continue()] it will pick up right
+// and next time the workflow is run with [Continue] it will pick up right
 // after this task, marking it as finished. The is useful for workflows that
 // performs OS reboot or self upgrades.
 //

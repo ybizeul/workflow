@@ -412,7 +412,6 @@ func (w *Workflow) Start() error {
 		_ = w.writeSockets()
 	}
 
-	// time.Sleep(1 * time.Second)
 	return nil
 }
 
@@ -432,6 +431,10 @@ func (w *Workflow) Reset() error {
 
 // Abort kills current tasks and stops workflow execution
 func (w *Workflow) Abort() {
+	if w.cancel == nil {
+		slog.Error("Trying to abort a workflow that is not running")
+		return
+	}
 	w.cancel()
 	err := w.currentTask.abort()
 	if err != nil {
