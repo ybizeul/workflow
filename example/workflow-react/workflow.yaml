@@ -1,9 +1,7 @@
 groups:
-  - name: Group 1
-    id: group1
+  - id: group1
     tasks:
-      - name: task 1
-        id: task1
+      - id: task1
         cmd: |
           while true; do
             output `date`

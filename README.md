@@ -12,11 +12,10 @@ meaningful information to the websocket.
 Tasks can have an optional relative `weight` value so a progress expressed in
 percent is added in the status message.
 
-## Working with websocket
+## Working with websockets
 
-[TODO]
-
-Refer to `workflow_test.go` for example of handling websockets
+[examples/workflow-react](examples/workflow-react) shows how to use workflow
+with a react frontend
 
 ## Example
 

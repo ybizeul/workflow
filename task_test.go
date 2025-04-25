@@ -8,7 +8,7 @@ import (
 )
 
 func TestTaskNoOutput(t *testing.T) {
-	task, err := NewTask(map[string]any{
+	task, err := newTask(map[string]any{
 		"id": "tast-task",
 		"cmd": `echo "sample text"
 		output sample output`,
@@ -18,14 +18,14 @@ func TestTaskNoOutput(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	err = task.Run(context.Background(), "")
+	err = task.run(context.Background(), "")
 	if err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestTaskOutput(t *testing.T) {
-	task, err := NewTask(map[string]any{
+	task, err := newTask(map[string]any{
 		"id": "tast-task",
 		"cmd": `echo "sample text"
 		output sample output`,
@@ -35,7 +35,7 @@ func TestTaskOutput(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	wfout, err := task.WfoutPipe()
+	wfout, err := task.wfoutPipe()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -56,7 +56,7 @@ func TestTaskOutput(t *testing.T) {
 		}
 	}()
 
-	stdout, err := task.StdoutPipe()
+	stdout, err := task.stdoutPipe()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -77,7 +77,7 @@ func TestTaskOutput(t *testing.T) {
 		}
 	}()
 
-	err = task.Run(context.Background(), ".")
+	err = task.run(context.Background(), ".")
 	if err != nil {
 		t.Fatal(err)
 	}

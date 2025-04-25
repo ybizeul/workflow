@@ -1,5 +1,10 @@
 package workflow
 
+// Group represents a group of tasks in a workflow. It will give informations
+// about the execution state like completion percentage, any error that occurred
+// and the last message received from the tasks.
+// Groups can be skipped if the command in skip_cmd from the yaml definition
+// returns a zero status code.
 type Group struct {
 	Id          string  `json:"id"`
 	Tasks       []*Task `json:"tasks"`
@@ -12,9 +17,7 @@ type Group struct {
 	Error       string  `json:"error"`
 }
 
-type SkipCmd string
-
-func NewGroup(y map[string]any) (*Group, error) {
+func newGroup(y map[string]any) (*Group, error) {
 	id, ok := y["id"].(string)
 	if !ok {
 		return nil, WorkflowErrorGroupMissingId
@@ -34,7 +37,7 @@ func NewGroup(y map[string]any) (*Group, error) {
 	}
 
 	for i := range tasks {
-		task, err := NewTask(tasks[i].(map[string]any))
+		task, err := newTask(tasks[i].(map[string]any))
 		if err != nil {
 			return nil, err
 		}
@@ -44,7 +47,7 @@ func NewGroup(y map[string]any) (*Group, error) {
 	return result, nil
 }
 
-func (w *Group) Progress() (int, int) {
+func (w *Group) progress() (int, int) {
 	// Calculate total weight
 	total := 0
 	current := 0

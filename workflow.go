@@ -188,7 +188,7 @@ func (w *Workflow) loadVars(definitions map[string]any) (map[string]string, erro
 func loadGroups(definitions []any) ([]*Group, error) {
 	result := []*Group{}
 	for i := range definitions {
-		group, err := NewGroup(definitions[i].(map[string]any))
+		group, err := newGroup(definitions[i].(map[string]any))
 		if err != nil {
 			return nil, err
 		}
@@ -198,7 +198,7 @@ func loadGroups(definitions []any) ([]*Group, error) {
 	return result, nil
 }
 
-// Start starts the wworkflow execution and returns any error encountered
+// Start starts the workflow execution and returns any error encountered
 func (w *Workflow) Start() error {
 	// Close the websocket when done
 	defer func() {
@@ -323,7 +323,7 @@ func (w *Workflow) Start() error {
 				return err
 			}
 
-			wfout, err := task.WfoutPipe()
+			wfout, err := task.wfoutPipe()
 			if err != nil {
 				return err
 			}
@@ -380,7 +380,7 @@ func (w *Workflow) Start() error {
 			task.Started = true
 
 			slog.Debug("running task", "task", task)
-			err = task.Run(w.ctx, path.Dir(w.workflowPath))
+			err = task.run(w.ctx, path.Dir(w.workflowPath))
 
 			if err != nil {
 				if task.Error == "" {
@@ -416,6 +416,9 @@ func (w *Workflow) Start() error {
 	return nil
 }
 
+// Reset is used to set the workflow to a clean state, and is only possible
+// if execution is finished. It can be used to run a workflow again without
+// having to create a new instance.
 func (w *Workflow) Reset() error {
 	if !w.Status.Finished {
 		return WorkflowErrorNotFinished
@@ -430,7 +433,7 @@ func (w *Workflow) Reset() error {
 // Abort kills current tasks and stops workflow execution
 func (w *Workflow) Abort() {
 	w.cancel()
-	err := w.currentTask.Abort()
+	err := w.currentTask.abort()
 	if err != nil {
 		slog.Error("unable to abort task", "error", err)
 	}
@@ -451,16 +454,8 @@ func (w *Workflow) Continue() error {
 	return nil
 }
 
-func (w *Workflow) Clean() {
-	err := w.initialize()
-	if err != nil {
-		slog.Error("unable to initialize workflow", "error", err)
-		return
-	}
-}
-
 // Percent returns the completion percentage between 0 and 100 of the workflow
-func (w *Workflow) Percent() float64 {
+func (w *Workflow) percent() float64 {
 	current, total := w.progress()
 	return float64(current) / float64(total) * 100
 }
@@ -472,7 +467,7 @@ func (w *Workflow) progress() (int, int) {
 		if w.Status.Groups[i].Skip {
 			continue
 		}
-		c, p := w.Status.Groups[i].Progress()
+		c, p := w.Status.Groups[i].progress()
 		current += c
 		total += p
 	}
@@ -483,7 +478,7 @@ func (w *Workflow) writeStatus() error {
 	w.Lock()
 	defer w.Unlock()
 
-	w.Status.Percent = int(w.Percent())
+	w.Status.Percent = int(w.percent())
 
 	b, err := json.Marshal(&w.Status)
 	if err != nil {
@@ -498,7 +493,6 @@ func (w *Workflow) writeStatus() error {
 }
 
 func (w *Workflow) writeSockets() error {
-
 	for i := range w.ws {
 		ws := w.ws[i]
 		err := wsjson.Write(context.Background(), ws, w.Status)

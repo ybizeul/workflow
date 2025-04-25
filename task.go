@@ -13,6 +13,17 @@ import (
 	"syscall"
 )
 
+// A Task represents a command to be run in the workflow.
+//
+// You can specify a weight for all tasks to have a meaningful progress
+// percentage at the group and at the workflow level. For example, a task that
+// is known to execute very quickly can be given a weight of 5, while a task
+// that is known to execute for a long time can be given a weight of 100.
+//
+// If `exits` is set to true, the running program will exit after the task,
+// and next time the workflow is run with [Continue()] it will pick up right
+// after this task, marking it as finished. The is useful for workflows that
+// performs OS reboot or self upgrades.
 type Task struct {
 	Id     string `json:"id"`
 	Cmd    string `json:"cmd"`
@@ -29,12 +40,12 @@ type Task struct {
 	cmd_Stderr io.WriteCloser
 	cmd_WFout  io.WriteCloser
 
-	Stdout io.ReadCloser `json:"-"`
-	Stderr io.ReadCloser `json:"-"`
-	Wfout  io.ReadCloser `json:"-"`
+	stdout io.ReadCloser `json:"-"`
+	stderr io.ReadCloser `json:"-"`
+	wfout  io.ReadCloser `json:"-"`
 }
 
-func NewTask(y map[string]any) (*Task, error) {
+func newTask(y map[string]any) (*Task, error) {
 	id, ok := y["id"].(string)
 	if !ok {
 		return nil, WorkflowErrorTaskMissingId
@@ -63,7 +74,7 @@ func NewTask(y map[string]any) (*Task, error) {
 	}, nil
 }
 
-func (t *Task) Run(ctx context.Context, cwd string) error {
+func (t *Task) run(ctx context.Context, cwd string) error {
 
 	cmd := exec.Command("/bin/bash", "-c", `
 	function output() {
@@ -90,7 +101,7 @@ func (t *Task) Run(ctx context.Context, cwd string) error {
 	}
 
 	// Connect Stdout & Stderr
-	if t.Stdout == nil {
+	if t.stdout == nil {
 		slog.Debug("setting Stdout to os.Stdout")
 		cmd.Stdout = os.Stdout
 	} else {
@@ -98,7 +109,7 @@ func (t *Task) Run(ctx context.Context, cwd string) error {
 		cmd.Stdout = t.cmd_Stdout
 	}
 
-	if t.Stderr == nil {
+	if t.stderr == nil {
 		slog.Debug("setting Stderr to os.Stderr")
 		cmd.Stderr = os.Stderr
 	} else {
@@ -200,7 +211,7 @@ func (t *Task) Run(ctx context.Context, cwd string) error {
 	return cmdErr
 }
 
-func (t *Task) Abort() error {
+func (t *Task) abort() error {
 	slog.Warn("aborting task", "task", t.Id)
 	pgid, err := syscall.Getpgid(t.cmd.Process.Pid)
 	if err == nil {
@@ -215,32 +226,32 @@ func (t *Task) Abort() error {
 	return nil
 }
 
-func (t *Task) StdoutPipe() (io.ReadCloser, error) {
-	if t.Stdout != nil {
+func (t *Task) stdoutPipe() (io.ReadCloser, error) {
+	if t.stdout != nil {
 		return nil, errors.New("stdout already set")
 	}
 	pr, pw := io.Pipe()
 	t.cmd_Stdout = pw
-	t.Stdout = pr
+	t.stdout = pr
 	return pr, nil
 }
 
-func (t *Task) StderrPipe() (io.ReadCloser, error) {
-	if t.Stderr != nil {
+func (t *Task) stderrPipe() (io.ReadCloser, error) {
+	if t.stderr != nil {
 		return nil, errors.New("stderr already set")
 	}
 	pr, pw := io.Pipe()
 	t.cmd_Stderr = pw
-	t.Stderr = pr
+	t.stderr = pr
 	return pr, nil
 }
 
-func (t *Task) WfoutPipe() (io.ReadCloser, error) {
-	if t.Wfout != nil {
+func (t *Task) wfoutPipe() (io.ReadCloser, error) {
+	if t.wfout != nil {
 		return nil, errors.New("wfout already set")
 	}
 	pr, pw := io.Pipe()
 	t.cmd_WFout = pw
-	t.Wfout = pr
+	t.wfout = pr
 	return pr, nil
 }
