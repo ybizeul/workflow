@@ -12,6 +12,8 @@ meaningful information to the websocket.
 Tasks can have an optional relative `weight` value so a progress expressed in
 percent is added in the status message.
 
+Full API documentation on [pkg.go.dev](https://pkg.go.dev/github.com/ybizeul/workflow)
+
 ## Working with websockets
 
 [example/workflow-react](example/workflow-react) shows how to use workflow
