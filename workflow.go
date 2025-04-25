@@ -295,6 +295,9 @@ func (w *Workflow) Start() error {
 			// Handle cancellation
 			if err := w.ctx.Err(); err != nil {
 				slog.Warn("workflow aborted", "error", err)
+				task.Error = err.Error()
+				group.Error = err.Error()
+				w.Status.Error = err.Error()
 				return nil
 			}
 
@@ -384,6 +387,7 @@ func (w *Workflow) Start() error {
 					task.Error = err.Error()
 					group.Error = err.Error()
 					w.Status.Error = err.Error()
+					w.Status.Finished = true
 				}
 				_ = w.writeStatus()
 				_ = w.writeSockets()
@@ -409,6 +413,17 @@ func (w *Workflow) Start() error {
 	}
 
 	// time.Sleep(1 * time.Second)
+	return nil
+}
+
+func (w *Workflow) Reset() error {
+	if !w.Status.Finished {
+		return WorkflowErrorNotFinished
+	}
+	err := w.initialize()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -483,14 +498,7 @@ func (w *Workflow) writeStatus() error {
 }
 
 func (w *Workflow) writeSockets() error {
-	if !w.Status.Started {
-		return nil
-	}
-	if w.ctx != nil {
-		if err := w.ctx.Err(); err != nil {
-			return err
-		}
-	}
+
 	for i := range w.ws {
 		ws := w.ws[i]
 		err := wsjson.Write(context.Background(), ws, w.Status)

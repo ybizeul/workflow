@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log/slog"
 	"net/http"
 
 	"github.com/ybizeul/workflow"
@@ -14,18 +15,18 @@ func main() {
 
 	defer wf.Abort()
 
-	go func() {
-		if err := wf.Start(); err != nil {
-			panic(err)
-		}
-	}()
-
 	http.Handle("POST /start", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		go func() {
+			wf.Reset()
 			if err := wf.Start(); err != nil {
-				panic(err)
+				slog.Error("Workflow ended", "err", err)
 			}
 		}()
+		w.WriteHeader(http.StatusOK)
+	}))
+
+	http.Handle("POST /stop", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		wf.Abort()
 		w.WriteHeader(http.StatusOK)
 	}))
 

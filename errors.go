@@ -12,4 +12,6 @@ var (
 
 	WorkflowErrorTaskMissingId      = fmt.Errorf("task missing id")
 	WorkflowErrorTaskMissingCommand = fmt.Errorf("task missing cmd")
+
+	WorkflowErrorNotFinished = fmt.Errorf("workflow not finished")
 )

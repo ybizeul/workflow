@@ -10,7 +10,7 @@ export interface WorkflowStatus {
     osrelease: string,
 }
 
-export class Group {
+export interface Group {
     id: string
     percent: number
     started: boolean
@@ -19,16 +19,6 @@ export class Group {
     lastMessage: string
     error: string|undefined
     tasks: Task[]
-    constructor(values: {id:string, percent:number, started: boolean, finished:boolean, skip: boolean, lastMessage: string}) {
-        this.id = values.id
-        this.percent = values.percent
-        this.started = values.started
-        this.finished = values.finished
-        this.skip = values.skip
-        this.lastMessage = values.lastMessage
-        this.error = undefined
-        this.tasks = []
-    }
 }
 
 export interface Task {
@@ -53,6 +43,21 @@ export class WorkflowClient {
         this.endpoint = endpoint
     }
 
+    onStatus(callback: (status: WorkflowStatus) => void) {
+        this.onstatus = callback
+    }
+
+    onGroup(id: string, callback: (group: Group) => void) {
+        if (this.ongroup === undefined) {
+            this.ongroup = {}
+        }
+        this.ongroup[id] = callback
+    }
+
+    onError(callback: (status: WorkflowStatus) => void) {
+        this.onerror = callback
+    }
+    
     read() {
         if (this.websocket) {
             return
@@ -101,20 +106,5 @@ export class WorkflowClient {
         this.websocket.onopen = (e) => {
             console.log("connected to websocket",e)
         }
-    }
-    
-    onStatus(callback: (status: WorkflowStatus) => void) {
-        this.onstatus = callback
-    }
-
-    onGroup(id: string, callback: (group: Group) => void) {
-        if (this.ongroup === undefined) {
-            this.ongroup = {}
-        }
-        this.ongroup[id] = callback
-    }
-
-    onError(callback: (status: WorkflowStatus) => void) {
-        this.onerror = callback
     }
 }

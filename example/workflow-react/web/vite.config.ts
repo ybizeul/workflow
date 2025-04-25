@@ -7,8 +7,14 @@ export default defineConfig({
   server: {
     port: 5174,
     proxy: {
-      '/wf': {
+      '/go': {
+        target: 'http://localhost:8080/',
+        rewrite: (path) => path.replace(/^\/go/, ''),
+        changeOrigin: true,
+      },
+      '/go/wf': {
         target: 'ws://localhost:8080/',
+        rewrite: (path) => path.replace(/^\/go/, ''),
         ws: true,
         rewriteWsOrigin: true,
         changeOrigin: true,
