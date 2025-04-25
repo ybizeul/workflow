@@ -14,7 +14,7 @@ percent is added in the status message.
 
 ## Working with websockets
 
-[example/workflow-react](examples/workflow-react) shows how to use workflow
+[example/workflow-react](example/workflow-react) shows how to use workflow
 with a react frontend
 
 ## Sending feedback during task execution
