@@ -460,9 +460,9 @@ func (w *Workflow) percent() float64 {
 	return float64(current) / float64(total) * 100
 }
 
-func (w *Workflow) progress() (int, int) {
-	total := 0
-	current := 0
+func (w *Workflow) progress() (float64, float64) {
+	total := 0.0
+	current := 0.0
 	for i := range w.Status.Groups {
 		if w.Status.Groups[i].Skip {
 			continue

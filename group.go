@@ -47,20 +47,20 @@ func newGroup(y map[string]any) (*Group, error) {
 	return result, nil
 }
 
-func (w *Group) progress() (int, int) {
+func (w *Group) progress() (float64, float64) {
 	// Calculate total weight
-	total := 0
-	current := 0
+	total := 0.0
+	current := 0.0
 	finished := true
 	for i := range w.Tasks {
 		task := w.Tasks[i]
 		if task.Finished {
-			current += task.Weight
+			current += float64(task.Weight)
 		} else {
 			finished = false
-			current += int(float64(task.Weight) * task.Percent)
+			current += float64(task.Weight) * task.Percent
 		}
-		total += task.Weight
+		total += float64(task.Weight)
 	}
 
 	w.Finished = finished

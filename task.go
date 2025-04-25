@@ -24,6 +24,18 @@ import (
 // and next time the workflow is run with [Continue()] it will pick up right
 // after this task, marking it as finished. The is useful for workflows that
 // performs OS reboot or self upgrades.
+//
+// Shell scripts can use special shell functions to provide output and progress
+// information to the workflow. The functions are:
+//
+// - `output`: will send a message to the workflow. It will be
+// available in `LastMessage` for the task, group, and workflow.
+//
+// - `progress`: will send a number between 0 and 1 to indicate the relative
+// progress of the current task.
+//
+// - `error`: will send an error description if something unexpected happens,
+// and will be available in `Error` field of task, group and workflow.
 type Task struct {
 	Id     string `json:"id"`
 	Cmd    string `json:"cmd"`

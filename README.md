@@ -17,6 +17,17 @@ percent is added in the status message.
 [examples/workflow-react](examples/workflow-react) shows how to use workflow
 with a react frontend
 
+## Sending feedback during task execution
+
+Shell scripts can use special shell functions to provide output and progress
+information to the workflow. The functions are:
+- `output`: will send a message to the workflow. It will be
+available in `LastMessage` for the task, group, and workflow.
+- `progress`: will send a number between 0 and 1 to indicate the relative
+progress of the current task.
+- `error`: will send an error description if something unexpected happens,
+and will be available in `Error` field of task, group and workflow.
+
 ## Example
 
 This workflow declares a variable `OS` with the output of `uname` command, then

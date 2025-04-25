@@ -3,7 +3,8 @@ groups:
     tasks:
       - id: task1
         cmd: |
-          while true; do
+          seq 0 0.1 1 | while read p; do
             output `date`
-            sleep 5
+            progress $p
+            sleep 1
           done

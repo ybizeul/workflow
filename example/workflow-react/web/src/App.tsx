@@ -48,9 +48,10 @@ function App() {
     <>
       <button disabled={!(!status?.started || status?.finished)} onClick={() => {start()}}>Start</button>
       <button disabled={!(status?.started && !status?.finished)} onClick={() => {stop()}}>Stop</button><br/>
+      Progress : {status?.percent}<br/>
       Output:
       <pre>
-        Last message: {status?.lastMessage}
+        {status?.lastMessage}
       </pre>
     </>
   )
