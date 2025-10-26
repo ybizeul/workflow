@@ -228,9 +228,9 @@ func TestGroupSkip(t *testing.T) {
 			slog.Error("error while reading", "error", err)
 			break
 		}
-		if status.LastMessage != "group2" {
-			t.Fatalf("group1 not skipped")
-		}
+	}
+	if status.LastMessage != "group2" {
+		t.Fatalf("group1 not skipped")
 	}
 }
 
