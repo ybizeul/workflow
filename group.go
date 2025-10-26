@@ -67,5 +67,7 @@ func (w *Group) progress() (float64, float64) {
 	if total > 0 {
 		w.Percent = float64(current) / float64(total) * 100
 	}
-	return current, total
+
+	// Make sure we don't return more than total
+	return min(current, total), total
 }
