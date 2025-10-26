@@ -351,7 +351,7 @@ func (w *Workflow) Start() error {
 							slog.Error("unable to parse progress", "error", err)
 							continue
 						}
-						w.currentTask.Percent = progress
+						w.currentTask.Percent = min(1, progress)
 					case strings.HasPrefix(s, "output:: "):
 						s = strings.TrimPrefix(s, "output:: ")
 						s = strings.TrimSpace(s)
