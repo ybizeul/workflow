@@ -11,10 +11,12 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path"
 	"strconv"
 	"strings"
 	"sync"
+	"syscall"
 
 	"github.com/coder/websocket"
 	"github.com/coder/websocket/wsjson"
@@ -122,6 +124,16 @@ func New(definitionFilePath string, statusFilePath string) (*Workflow, http.Hand
 			}
 		}
 	})
+
+	// Setup signals for clean shutdown
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	go func() {
+		sig := <-sigs
+		result.Lock()
+		defer result.Unlock()
+		slog.Info("workflow received signal", slog.String("signal", sig.String()))
+	}()
 
 	return result, websocketHandlerFunc, nil
 }
@@ -485,12 +497,12 @@ func (w *Workflow) writeStatus() error {
 
 	b, err := json.Marshal(&w.Status)
 	if err != nil {
-		slog.Error("unable to write status", "error", err)
+		return fmt.Errorf("unable to write status : %w", err)
 	}
 
 	err = os.WriteFile(w.statusPath, b, 0644)
 	if err != nil {
-		return err
+		return fmt.Errorf("unable to write status file : %w", err)
 	}
 	return nil
 }
