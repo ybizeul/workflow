@@ -11,12 +11,10 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
-	"os/signal"
 	"path"
 	"strconv"
 	"strings"
 	"sync"
-	"syscall"
 
 	"github.com/coder/websocket"
 	"github.com/coder/websocket/wsjson"
@@ -126,15 +124,15 @@ func New(definitionFilePath string, statusFilePath string) (*Workflow, http.Hand
 		}
 	})
 
-	// Setup signals for clean shutdown
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-	go func() {
-		sig := <-sigs
-		result.Lock()
-		defer result.Unlock()
-		slog.Info("workflow received signal", slog.String("signal", sig.String()))
-	}()
+	// // Setup signals for clean shutdown
+	// sigs := make(chan os.Signal, 1)
+	// signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	// go func() {
+	// 	sig := <-sigs
+	// 	result.Lock()
+	// 	defer result.Unlock()
+	// 	slog.Info("workflow received signal", slog.String("signal", sig.String()))
+	// }()
 
 	return result, websocketHandlerFunc, nil
 }
