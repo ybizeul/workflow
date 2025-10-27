@@ -20,6 +20,7 @@ import (
 
 	"github.com/coder/websocket"
 	"github.com/coder/websocket/wsjson"
+	"github.com/google/renameio"
 	"gopkg.in/yaml.v3"
 )
 
@@ -500,7 +501,7 @@ func (w *Workflow) writeStatus() error {
 		return fmt.Errorf("unable to write status : %w", err)
 	}
 
-	err = os.WriteFile(w.statusPath, b, 0644)
+	err = renameio.WriteFile(w.statusPath, b, 0644)
 	if err != nil {
 		return fmt.Errorf("unable to write status file : %w", err)
 	}
